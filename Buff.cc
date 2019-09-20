@@ -1,7 +1,7 @@
 #include "server.hh"
 
 int Buff::readin(int from,char *co_buff) {
-	cout << "into Buff readin(int,char *)" << endl;
+	//cout << "into Buff readin(int,char *)" << endl;
     int n;
     if ((n = read(from,co_buff, &(this->from_socket_buff[BUFF_SIZE]) - co_buff)) < 0) {
 		if (errno != EWOULDBLOCK | EAGAIN){
@@ -15,13 +15,13 @@ int Buff::readin(int from,char *co_buff) {
 	}//该用户关闭发送连接，那么直接,返回该用户的epoll主循环，把该用户对应的socket，用户类删除
 	else
 	{
-		cout << "readin() back n = " << n << endl;
+		//cout << "readin() back n = " << n << endl;
         this->from_in_flag = this->from_in_flag + n;
 	}
 	return n;
 }
 int Buff::readout(char *co_buff,int to) {
-	cout << "into Buff readout(char*,int)" << endl;
+	//cout << "into Buff readout(char*,int)" << endl;
 	int n;
 	if((n = write(to, co_buff,this->to_in_flag - co_buff)) < 0){
 		if (errno != EAGAIN | EWOULDBLOCK){
@@ -33,7 +33,7 @@ int Buff::readout(char *co_buff,int to) {
 	}//有一个用户发生了write socket错误就直接退出进程
 	else
 	{
-		cout << "write " << n << "bytes to " << to << endl;
+		//cout << "write " << n << "bytes to " << to << endl;
 		this->to_out_flag = this->to_out_flag + n;
 		//co_buff = co_buff + n;
 	}

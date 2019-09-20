@@ -8,6 +8,42 @@ void err_quit(const char *err_str){
 int min(int a,int b){ 
     return a>b?b:a;
 }
+struct min_t min_two(int a,int b){
+	min_t ret = {0,0};
+	if(a >= b){
+		ret.id = 2;
+		ret.min_n = b;
+	}
+	else
+	{
+		ret.id = 1;
+		ret.min_n = a;
+	}
+	return ret;
+}
+ struct min_t min_three(int a,int b,int c){
+	min_t ret = {0,0};
+	 
+	 if(a >= b){
+		ret.id = 2;
+		ret.min_n = b;
+		if(b > c){
+			ret.id = 3;
+			ret.min_n = c;
+		}
+	}
+	else
+	{
+		ret.id = 1;
+		ret.min_n = a;
+		if(a > c){
+			ret.min_n = c;
+			ret.id = 3;
+		}
+	}
+	return ret;
+ }
+
 int epfd;
 
 int agent_close_flag = 0;
@@ -36,7 +72,7 @@ void epoll_del(Agent *ptr, int sockfd,uint32_t events, int op)
 	delete ptr;
 	ev.events = events;
     epoll_ctl(epfd,op,sockfd,NULL);
-	cout <<"sockfd is " << sockfd << " client is closed and del in|out from epollfd" << endl;
+	//cout <<"sockfd is " << sockfd << " client is closed and del in|out from epollfd" << endl;
     close(sockfd);  
 	agent_close_flag = 1;
 }

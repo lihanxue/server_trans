@@ -32,7 +32,7 @@
 #define port 9877
 #define MAX_EVENT 1000
 #define MAX_CLINUM 1000
-#define BUFF_SIZE 4096
+#define BUFF_SIZE 20480
 #define LISTENQ 100
 #define TIMEOUT 500
 
@@ -47,6 +47,11 @@ struct head{
     int decid;
 };//12byte
 
+struct min_t{
+    int min_n;
+    int id;
+};
+
 class Task;
 class Agent;
 class Buff{
@@ -54,14 +59,14 @@ class Buff{
     friend Agent;
     public:
         Buff(){
-            from_socket_buff = new char[BUFF_SIZE];
-            to_socket_buff = new char[BUFF_SIZE];
+            from_socket_buff = new char[BUFF_SIZE+1];
+            to_socket_buff = new char[BUFF_SIZE+1];
             from_in_flag = from_out_flag = from_socket_buff;
             to_in_flag = to_out_flag = to_socket_buff;
         }
         ~Buff(){
-            delete from_socket_buff;
-            delete to_socket_buff;
+            delete[] from_socket_buff;
+            delete[] to_socket_buff;
         }
         //void clear_buff();//清空当前buff的所有数据
         int readin(int from,char *co_buff);//从from读到buff的对应缓冲区
@@ -145,10 +150,10 @@ class Agent_listen: public Agent {
             if(task != NULL)
                 delete task;
         }
+        Task *task;
     private:
         int fd;
         Buff *buff;
-        Task *task;
 };
 class Agent_connect_echo: public Agent {
     public:
@@ -167,12 +172,11 @@ class Agent_connect_echo: public Agent {
             if(task != NULL)
                 delete task;
         }
-        //void build_task(char task[]);
+        Task_echo *task;
     private:
         int fd;
         //char task[10];
         Buff *buff;
-        Task_echo *task;
         int close_flag;
         int first_flag;
 };
@@ -193,16 +197,17 @@ class Agent_connect_trans: public Agent {
         void agent_write();
         Buff* get_buff();
         //int read_head();
+        int get_fd();
         ~Agent_connect_trans(){
             if(buff != NULL)
                 delete buff;
             if(task != NULL)
                 delete task;
         }
+        Task_trans *task;
         private:
             int fd;
             Buff *buff;
-            Task_trans *task;
             int close_flag;
             int first_flag;
             //head from_buff_head;
@@ -231,6 +236,8 @@ class Epoll {
 extern void err_quit(const char *err_str);
 
 extern int min(int a,int b);
+extern struct min_t min_two(int a,int b);
+extern struct min_t min_three(int a,int b,int c);
 extern int epfd;
 extern int agent_close_flag; 
 extern map<int,Agent_connect_trans*> register_table;

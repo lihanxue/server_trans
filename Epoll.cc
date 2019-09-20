@@ -46,13 +46,6 @@ void Epoll::Epoll_run() {
 		{
 			if(events[i].events & EPOLLIN)
 			{
-				//Agent *agent_base = (Agent *)events[i].data.ptr;
-				//agent_base->agent_read();
-				/*if(agent_base->close_flag == 1){
-					events[i].events = EPOLLIN | EPOLLOUT;
-					epoll_ctl(epfd, EPOLL_CTL_DEL,events[i].data.fd , &events[i]);
-                    close(events[i].data.fd);
-				}*///关闭套接字与其epoll
 				agent_close_flag = 0;
 				((Agent*)events[i].data.ptr)->agent_read();
 				if(agent_close_flag == 1){
@@ -62,13 +55,6 @@ void Epoll::Epoll_run() {
 			}
 			if(events[i].events & EPOLLOUT)
 			{
-				//Agent *agent_base = (Agent *)events[i].data.ptr;
-				//agent_base->agent_write();
-                /*if(agent_base->close_flag == 1){
-                    events[i].events = EPOLLIN | EPOLLOUT;
-                    epoll_ctl(epfd,EPOLL_CTL_DEL,events[i].data.fd,&events[i]);
-                    close(events[i].data.fd);
-                }*/
 				((Agent*)events[i].data.ptr)->agent_write();
 			}
 		}
